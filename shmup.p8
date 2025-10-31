@@ -1,33 +1,44 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
-function _draw()
-	cls(0)
-	--debug()
-	draw_ship()
-	draw_bullet()
-	draw_ui()
-end
+--main
 
 function _init()
 	cls(0)
 	make_game()
-	make_ship()
-	make_bullet()
+end
+
+function _draw()
+	cls(0)
+	--debug()
+	if game.stage=="game" then
+		draw_game()
+	elseif game.stage=="start" then
+		draw_start()
+	elseif game.stage=="over" then
+		draw_gameover()
+	end
 end
 
 function _update()
-	move_ship()
-	move_bullet()
-	ship_bounds()
+	if game.stage=="game" then
+		update_game()
+	elseif game.stage=="start" then
+		update_start()
+	elseif game.stage=="over" then
+		update_gameover()
+	end
+	--flush_bullets()
 end
 
 
 
 -->8
+--ship
+
 function make_ship()
 	ship={}
-	ship.x=32
+	ship.x=64
 	ship.y=64
 
 	
@@ -93,8 +104,7 @@ function player_move()
 	end
 	if (btnp(5)) then
 		ship.muzzle=5
-		bullet.x=ship.x
-		bullet.y=ship.y-4
+		make_bullet()
 		sfx(0)
 	end
 	
@@ -152,22 +162,44 @@ if (ship.x > high) then
 end
 
 -->8
+--bullets
+
 function make_bullet()
-	bullet={}
-	bullet.x=ship.x
-	bullet.y=-10
-	bullet.speed=5
-	bullet.sprite=16
+	local bul = {}
+	bul.x=ship.x
+	bul.y=ship.y-5
+	bul.speed=5
+	bul.sprite=16
+	add(bullets, bul)
 end
 
-function draw_bullet()
-	spr(bullet.sprite, bullet.x, bullet.y)
+function init_bullets()
+	bullets={}
 end
 
-function move_bullet()
-	bullet.y -= bullet.speed
+function draw_bullets()
+	print(#bullets)
+	for i=1, #bullets do
+ 	spr(bullets[i].sprite, bullets[i].x, bullets[i].y)
+ end	
+end
+
+function move_bullets()
+ for i=1, #bullets do
+ 	bullets[i].y -= bullets[i].speed
+ end
+end
+
+function flush_bullets()
+	for i=1, #bullets do 
+ 	if bullets[i].y < 0 then
+			deli(bullets, i)
+		end
+	end
 end
 -->8
+--game manager
+
 function debug()
 	--print(ship.y, 20,20)
 	--print(ship.x, 6,20)
@@ -179,7 +211,8 @@ end
 
 function make_game()
 	game={}
-	game.score = 32000
+	game.stage = "start"
+	game.score = 10000
 	game.life = 3
 	game.lifespr = 11
 	game.lifeempty = 12
@@ -215,6 +248,88 @@ function draw_bombs()
 	end
 end
 
+
+-->8
+--background
+
+function make_background()
+	stars = {}
+	for i=1, 100 do
+		local elem = {}
+		elem.x = flr(rnd(128))
+		elem.y = flr(rnd(128))
+		elem.spd = rnd(1.5)+0.5
+		if elem.spd < 0.75 then
+			elem.col = 1
+		elseif elem.spd < 1 then
+		 elem.col = 13
+		elseif elem.spd < 1.5 then
+			elem.col = 3
+		else
+		 elem.col = 7
+		end
+		add(stars, elem)
+	end
+end
+
+function draw_background()
+	for i=1, #stars do
+		local x = stars[i].x
+		local y = stars[i].y
+		local col = stars[i].col
+		if stars[i].spd > 1.5 then
+			pset(x, y, col)
+		else
+			line(x, y, x, y-2, col)
+		end
+		
+		
+		if stars[i].y >= 128 then
+			stars[i].y = 0
+		end
+			stars[i].y += stars[i].spd
+	end
+end
+-->8
+--stages
+
+function draw_game()
+		draw_background()
+		draw_ship()
+		draw_bullets()
+		draw_ui()
+end
+
+function update_game()
+		move_ship()
+		move_bullets()
+		ship_bounds()
+end
+
+function draw_start()
+	cls(1)
+	print("shoot 'em bb", 40, 45,12)
+	print("press ❎ key to start", 20, 80, 7)
+end
+
+function update_start()
+	if btnp(5) then
+		start_game()
+	end
+end
+
+function draw_gameover()
+end
+
+function update_gameover()
+end
+
+function start_game()
+ game.stage="game"
+ make_background()
+	make_ship()
+	init_bullets()
+end
 __gfx__
 00000000000880000008300000038000000000000000000000000000000000000000000000000000000000000880088008800880000000000000099000000000
 00000000003bb300003b30000003b300000000000000000000000000000000000000000000000000000000008888888880088008000000000000660000005500
@@ -232,4 +347,4 @@ __gfx__
 00baab00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00033000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
-000100002f7502b750287501b75024750217501f750167501a7501c75016750297501375010750000000b75009750087500000000000000000000000000000000000000000000000000000000000000000000000
+00010000277501f730227501f7301b75014730117500f7300d7500b73009730097200871008710097200b7200c7200c7100c7500e7500e7500e75010750000000000000000000000000000000000000000000000
