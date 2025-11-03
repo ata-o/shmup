@@ -43,7 +43,7 @@ function make_ship()
 
 	
 	--sprites
-	ship.sprite = 1
+	ship.spr = 1
 	ship.defaultspr = 1
 	ship.bankfront = 18
 	ship.bankback = 19
@@ -51,6 +51,10 @@ function make_ship()
 	ship.bankright = 3
 	
 	ship.flamespr = 5
+
+	ship.shottimer = 0
+
+	ship.invulnerable = 0
 	
 	ship.muzzle=0
 	
@@ -64,7 +68,7 @@ function make_ship()
 end
 
 function draw_ship()
-	spr(ship.sprite, ship.x, ship.y)
+	draw_object(ship)
 	spr(ship.flamespr,ship.x,ship.y+7)
 	if ship.muzzle >0 then
 		circfill(ship.x+3, ship.y-2, ship.muzzle, 7)
@@ -79,8 +83,22 @@ function move_ship()
 	end
 end
 
-function ship_bounds()
-	screen_bounds(screen.low,screen.high)
+function check_ship_bounds()
+	screen_teleport(screen.low,screen.high)
+end
+
+function check_collisions()
+	--check collisions with enemies
+	for enem in all(enemies) do
+		if collide(ship, enem) and ship.invulnerable == 0 then
+			game.life -= 1
+			sfx(2)
+			ship.invulnerable = 200
+		end
+		if ship.invulnerable > 0 then
+			ship.invulnerable -= 1
+		end
+	end
 end
 
 function dvd_move()
@@ -89,29 +107,32 @@ function dvd_move()
 end
 
 function player_move()
-	ship.sprite = ship.defaultspr
+	ship.spr = ship.defaultspr
 	if (btn(0)) then
-	 sfx(1)
-	 ship.sprite = ship.bankleft
+	 ship.spr = ship.bankleft
 		ship.x -= ship.speed
 	end
 	if (btn(1)) then
-		sfx(1)
-		ship.sprite = ship.bankright
+		ship.spr = ship.bankright
 		ship.x += ship.speed
 	end
 	if (btn(2)) then
-	 ship.sprite = ship.bankfront
+	 	ship.spr = ship.bankfront
 		ship.y -= ship.speed
 	end
 	if (btn(3)) then
-		ship.sprite = ship.bankback
+		ship.spr = ship.bankback
 		ship.y += ship.speed
 	end
-	if (btnp(5)) then
-		ship.muzzle=5
-		make_bullet(1)
-		sfx(0)
+	if (btn(5)) then
+		if ship.shottimer > 0 then
+			ship.shottimer -= 1
+		else
+			ship.shottimer = 3
+			ship.muzzle=5
+			make_bullet(3)
+			sfx(0)
+		end
 	end
 	
 	if ship.muzzle > 0 then
@@ -177,7 +198,7 @@ function make_bullet(cnt)
 			x=ship.x,
 			y=ship.y-5,
 			speed=5,
-			sprite=32,
+			spr=32,
 			orient=i
 		}
 		add(bullets, bul)
@@ -189,28 +210,23 @@ function init_bullets()
 end
 
 function draw_bullets()
-	print(#bullets)
-	for i=1, #bullets do
- 	spr(bullets[i].sprite, bullets[i].x, bullets[i].y)
- end	
+	for bul in all(bullets) do
+		draw_object(bul)
+ 	end	
 end
 
 function move_bullets()
-	for i=#bullets,1,-1 do
-		bullets[i].y -= bullets[i].speed
-		bullets[i].x += bullets[i].orient * (bullets[i].speed/8)
+	for bul in all(bullets) do
+		bul.y -= bul.speed
+		bul.x += bul.orient * (bul.speed/8)
 	
-		
-		bullets[i].sprite += 1
-		if bullets[i].sprite > 36 then
-			bullets[i].sprite = 32
+		bul.spr += 1
+		if bul.spr > 36 then
+			bul.spr = 32
 		end
 
- 		if bullets[i].y < -8 
-			or bullets[i].x < -8
-			or bullets[i].x > 127
-			 then
-			deli(bullets, i)
+ 		if bul.y < -8 or bul.x < -8 or bul.x > 127 then
+			del(bullets, bul)
 		end
  	end
 end
@@ -231,6 +247,7 @@ function make_game()
 	game.stage = "start"
 	game.score = 10000
 	game.life = 3
+	game.maxlife = 3
 	game.lifespr = 11
 	game.lifeempty = 12
 	
@@ -246,11 +263,11 @@ function draw_ui()
 end
 
 function draw_hp()
-	for i=1,game.life do
+	for i=1,game.maxlife do
 		if game.life>=i then
-			spr(game.lifespr, i*9-8,1)
+			spr(game.lifespr, 1+(i*9-8),1)
 		else
-			spr(game.lifeempty, i*9-8,1)
+			spr(game.lifeempty, 1+(i*9-8),1)
 		end
 	end
 end
@@ -265,25 +282,52 @@ function draw_bombs()
 	end
 end
 
+function draw_object(obj)
+	spr(obj.spr, obj.x, obj.y)
+end
+
+function collide(a,b)
+	return not (a.x > b.x + 7 or
+			  a.x + 7 < b.x or
+			  a.y > b.y + 7 or
+			  a.y + 7 < b.y)
+end
+
+function check_life()
+	if game.life <= 0 then
+		game.stage="over"
+	end
+end
+
+function check_bullet_collisions()
+	for bul in all(bullets) do
+		for enem in all(enemies) do
+			if collide(bul, enem) then
+				sfx(3)
+				game.score += 100
+				del(bullets, bul)
+				del(enemies, enem)
+			end
+		end
+	end
+end
 
 -->8
 --background
 
 function make_background()
 	stars = {}
-	for i=1, 100 do
+	for i=1, 50 do
 		local elem = {
 			x = flr(rnd(128)),
 			y = flr(rnd(128)),
-			spd = rnd(1.5)+0.5 
+			spd = rnd(1.2)+0.2
 		}
 		
 		if elem.spd < 0.75 then
 			elem.col = 1
 		elseif elem.spd < 1 then
 		 elem.col = 13
-		elseif elem.spd < 1.5 then
-			elem.col = 3
 		else
 		 elem.col = 7
 		end
@@ -293,21 +337,18 @@ function make_background()
 end
 
 function draw_background()
-	for i=1, #stars do
-		local x = stars[i].x
-		local y = stars[i].y
-		local col = stars[i].col
-		if stars[i].spd < 1.5 then
-			pset(x, y, col)
-		else
-			line(x, y, x, y-2, col)
-		end
+	for star in all(stars) do
+		--if star.spd < 1.5 then
+		--	pset(star.x, star.y, star.col)
+		--else
+		--	line(star.x, star.y, star.x, star.y, star.col)
+		--end
+		pset(star.x, star.y, star.col)
 		
-		
-		if stars[i].y >= 128 then
-			stars[i].y = 0
+		if star.y >= 128 then
+			star.y = 0
 		end
-			stars[i].y += stars[i].spd
+			star.y += star.spd
 	end
 end
 -->8
@@ -317,13 +358,19 @@ function draw_game()
 		draw_background()
 		draw_ship()
 		draw_bullets()
+		draw_enemies()
 		draw_ui()
 end
 
 function update_game()
 		move_ship()
 		move_bullets()
-		ship_bounds()
+		move_enemies()
+
+		check_ship_bounds()
+		check_bullet_collisions()
+		check_collisions()
+		check_life()
 end
 
 function draw_start()
@@ -352,11 +399,57 @@ function update_gameover()
 end
 
 function start_game()
- game.stage="game"
- make_background()
+ 	game.stage="game"
+	game.life = game.maxlife
+ 	make_background()
 	make_ship()
 	init_bullets()
+	init_enemies()
 end
+-->8
+
+function init_enemies()
+	enemies = {}
+	
+	local myen={
+		x=60,
+		y=10,
+		spr=21
+	}
+
+	 for i=1,5 do
+		local myen={
+			x=20+(i*20),
+			y=10,
+			spr=21
+		}	 
+		add(enemies, myen)
+	 end
+	
+	
+end
+
+function draw_enemies()
+	for enem in all(enemies) do
+		draw_object(enem)
+ 	end	
+end
+
+function move_enemies()
+	for enem in all(enemies) do
+ 		enem.y += 0.5
+		enem.spr += 0.4
+		if enem.spr >= 25 then
+			enem.spr = 21
+		end
+
+		if enem.y>128 then
+			del(enemies, enem)
+		end
+ 	end	
+end
+
+
 __gfx__
 00000000000880000008300000038000000000000000000000000000000000000000000000000000000000000880088008800880000000000000099000000000
 00000000003bb300003b30000003b300000000000000000000000000000000000000000000000000000000008888888880088008000000000000660000005500
@@ -366,14 +459,14 @@ __gfx__
 0070070003b11b300311bb3003bb113000000000000cc000000cc000000cc00000000000000cc000000000000088880000800800000000000111111001000010
 00000000003556000055b300003b55000000000000000000000cc000000000000000000000000000000000000008800000088000000000000111111001000010
 00000000000990000009900000099000000000000000000000000000000000000000000000000000000000000000000000000000000000000011110000111100
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000bb00000000000003bb30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00b77b000000000003b7cb3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00baab000000000036b11b6333388333000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00baab00000000003b3993b33bb00bb3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00baab00000000000009900003b7cb30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00033000000000000000000000311300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000000000000000000055000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000330033003300330033003300330033000000000000000000000000000000000000000000000000000000000
+000bb00000000000003bb30000000000000000003bb33bb33bb33bb33bb33bb33bb33bb300000000000000000000000000000000000000000000000000000000
+00b77b000000000003b7cb3000000000000000003bbbbbb33bbbbbb33bbbbbb33bbbbbb300000000000000000000000000000000000000000000000000000000
+00baab000000000036b11b6333388333000000003b7717b33b7717b33b7717b33b7717b300000000000000000000000000000000000000000000000000000000
+00baab00000000003b3993b33bb00bb3000000000b7117b00b7117b00b7117b00b7117b000000000000000000000000000000000000000000000000000000000
+00baab00000000000009900003b7cb30000000000037730000377300003773000037730000000000000000000000000000000000000000000000000000000000
+00033000000000000000000000311300000000000303303003033030030330300303303000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000055000000000000300003030000003030000300330033000000000000000000000000000000000000000000000000000000000
 00bbbb0000000000000000000000000000bbbb000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0baaaab000bbbb000000000000bbbb000baaaab00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 baa77aab0baaaab0000bb0000baaaab0baa77aab0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -385,3 +478,4 @@ baa77aab0baaaab0000330000baaaab0baa77aab0000000000000000000000000000000000000000
 __sfx__
 00010000190501b0301e05021030220501b0101b0001e0000d7000b70009700097000870008700097000b7000c7000c7000c7000e7000e7000e70010700000000000000000000000000000000000000000000000
 000300000305003050020400101005100021000210002100021000210002100041000410004100041001320013200132001320013200142001420000000000000000000000000000000000000000000000000000
+02030000336502d65027650236501f6501d6501b6501865016630146201362011610106000f6000e6000e6000e6000e6001710017000170001700000000000000000000000000000000000000000000000000000
