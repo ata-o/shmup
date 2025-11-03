@@ -22,6 +22,7 @@ end
 
 function _update()
 	if game.stage=="game" then
+		t+=1
 		update_game()
 	elseif game.stage=="start" then
 		update_start()
@@ -67,11 +68,21 @@ function make_ship()
 	screen.low=0
 end
 
-function draw_ship()
+function draw_ship_sprites()
 	draw_object(ship)
 	spr(ship.flamespr,ship.x,ship.y+7)
 	if ship.muzzle >0 then
 		circfill(ship.x+3, ship.y-2, ship.muzzle, 7)
+	end
+end
+
+function draw_ship()
+	if ship.invulnerable > 0 then
+		if sin(t/4) < 0.5 then
+			draw_ship_sprites()
+		end
+	else
+		draw_ship_sprites()
 	end
 end
 
@@ -303,6 +314,8 @@ function check_bullet_collisions()
 	for bul in all(bullets) do
 		for enem in all(enemies) do
 			if collide(bul, enem) then
+				-- TODO: add explosion effect
+				-- TODO: add enemy death anim
 				sfx(3)
 				game.score += 100
 				del(bullets, bul)
@@ -399,6 +412,7 @@ function update_gameover()
 end
 
 function start_game()
+	t=0
  	game.stage="game"
 	game.life = game.maxlife
  	make_background()
@@ -410,23 +424,21 @@ end
 
 function init_enemies()
 	enemies = {}
-	
-	local myen={
-		x=60,
-		y=10,
-		spr=21
-	}
 
 	 for i=1,5 do
-		local myen={
-			x=20+(i*20),
-			y=10,
-			spr=21
-		}	 
-		add(enemies, myen)
+		spawn_enemy(20+(i*20))
 	 end
 	
 	
+end
+
+function spawn_enemy(x)
+	local myen={
+		x=x,
+		y=-8,
+		spr=21
+	}	 
+	add(enemies, myen)
 end
 
 function draw_enemies()
@@ -479,3 +491,4 @@ __sfx__
 00010000190501b0301e05021030220501b0101b0001e0000d7000b70009700097000870008700097000b7000c7000c7000c7000e7000e7000e70010700000000000000000000000000000000000000000000000
 000300000305003050020400101005100021000210002100021000210002100041000410004100041001320013200132001320013200142001420000000000000000000000000000000000000000000000000000
 02030000336502d65027650236501f6501d6501b6501865016630146201362011610106000f6000e6000e6000e6000e6001710017000170001700000000000000000000000000000000000000000000000000000
+000100003565008650256500e65016650126501165012650136500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
