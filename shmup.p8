@@ -29,7 +29,6 @@ function _update()
 	elseif game.stage=="over" then
 		update_gameover()
 	end
-	--flush_bullets()
 end
 
 
@@ -183,7 +182,7 @@ function screen_teleport(low, high)
 end
 
 function dvd_bounce(low, high)
-if (ship.x > high) then
+	if (ship.x > high) then
 		ship.xceed = -ship.xceed
 	end
 	if (ship.x < low) then
@@ -205,7 +204,7 @@ end
 
 function make_bullet(cnt)
 	bullet_count = flr(cnt/2)
-	for i=-bullet_count,bullet_count do
+	for i=-bullet_count, bullet_count do
 		local bul = {
 			x=ship.x,
 			y=ship.y-5,
@@ -224,7 +223,7 @@ end
 function draw_bullets()
 	for bul in all(bullets) do
 		draw_object(bul)
- 	end	
+ 	end
 end
 
 function move_bullets()
@@ -259,7 +258,7 @@ function make_game()
 	game.stage = "start"
 	game.score = 0
 	game.life = 3
-	game.maxlife = 3
+	game.maxlife = 4
 	game.lifespr = 11
 	game.lifeempty = 12
 	
@@ -349,7 +348,7 @@ function make_background()
 		if elem.spd < 0.75 then
 			elem.col = 1
 		elseif elem.spd < 1 then
-		 elem.col = 13
+		 elem.col = 8
 		else
 		 elem.col = 7
 		end
@@ -363,7 +362,7 @@ function draw_background()
 		--if star.spd < 1.5 then
 		--	pset(star.x, star.y, star.col)
 		--else
-		--	line(star.x, star.y, star.x, star.y, star.col)
+		--	line(star.x, star.y, star.x, star.y-2, star.col)
 		--end
 		pset(star.x, star.y, star.col)
 		
@@ -424,6 +423,7 @@ end
 function start_game()
 	t=0
  	game.stage="game"
+	game.score = 0
 	game.life = game.maxlife
  	make_background()
 	make_ship()
@@ -447,7 +447,7 @@ function spawn_enemy(x)
 		spr=21,
 		hp=5,
 		flash=0
-	}	 
+	}
 	add(enemies, myen)
 end
 
@@ -563,3 +563,4 @@ __sfx__
 02030000336502d65027650236501f6501d6501b6501865016630146201362011610106000f6000e6000e6000e6000e6001710017000170001700000000000000000000000000000000000000000000000000000
 000100003565008650256500e65016650126501165012650136500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00010000066502c6502b6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+011800000c050110500c050110500c050130500c050150500c050130500c0500c050110500c050130500c050110500c050130500c050110500000000000000000000000000000000000000000000000000000000
