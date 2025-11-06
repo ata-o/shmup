@@ -326,7 +326,7 @@ function check_bullet_collisions()
 				if enem.hp <= 0 then
 					sfx(3)
 					del(enemies, enem)
-					make_particle(enem.x-3, enem.y-3)
+					make_particle(enem.x+3, enem.y+3)
 				end
 			end
 		end
@@ -484,28 +484,72 @@ end
 --particles
 
 function init_particles()
-	explods = {}
+	--explods = {}
+	particles = {}
 end
 
 function make_particle(x,y)
-	local expl={
+	--first big particle, then smaller ones
+	local part={
 		x=x,
 		y=y,
-		spr=64,
-		age=1
-	}	 
-	add(explods, expl)
+		sx=0,
+		sy=0,
+		age=0,
+		maxage=0,
+		size=8
+	}
+
+	add(particles, part)
+	for i=1,30 do
+		local part={
+			x=x,
+			y=y,
+			sx=(rnd()-0.5)*4,
+			sy=(rnd()-0.5)*4,
+			age=rnd(2),
+			maxage=10+rnd(10),
+			size=1+rnd(4)
+		}
+
+		add(particles, part)
+	end
 end
 
 function draw_particles()
-	local exframes = {64,66,66,68,70,70,72,72}
-	for exp in all(explods) do
-		spr(exframes[flr(exp.age)], exp.x, exp.y, 2, 2)
-		exp.age+=0.75
-		if exp.age >= #exframes then
-			del(explods, exp)
+	for part in all(particles) do
+		local pc = 7
+
+		local age_colors = {
+			{5, 10},
+			{7, 9},
+			{10, 8},
+			{12, 2},
+			{15, 5}
+		}
+
+		for _, age_color in ipairs(age_colors) do
+			if part.age > age_color[1] then
+				pc = age_color[2]
+			end
 		end
- 	end
+
+		circfill(part.x, part.y, part.size, pc)
+
+		part.x += part.sx
+		part.y += part.sy
+
+		part.sx *= 0.85
+		part.sy *= 0.85
+		part.age += 1
+
+		if part.age > part.maxage then
+			part.size -= 0.5
+			if part.size < 0 then
+				del(particles, part)
+			end
+		end
+	end
 end
 
 __gfx__
