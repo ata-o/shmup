@@ -105,6 +105,7 @@ function check_collisions()
 			game.life -= 1
 			sfx(2)
 			ship.invulnerable = 200
+			make_particle(ship.x+3, ship.y+3, true)
 		end
 		if ship.invulnerable > 0 then
 			ship.invulnerable -= 1
@@ -488,7 +489,7 @@ function init_particles()
 	particles = {}
 end
 
-function make_particle(x,y)
+function make_particle(x,y, isblue)
 	--first big particle, then smaller ones
 	local part={
 		x=x,
@@ -497,7 +498,8 @@ function make_particle(x,y)
 		sy=0,
 		age=0,
 		maxage=0,
-		size=8
+		size=10,
+		blue=isblue 
 	}
 
 	add(particles, part)
@@ -509,32 +511,43 @@ function make_particle(x,y)
 			sy=(rnd()-0.5)*4,
 			age=rnd(2),
 			maxage=10+rnd(10),
-			size=1+rnd(4)
+			size=1+rnd(4),
+			blue=isblue
 		}
 
 		add(particles, part)
 	end
 end
 
+function particle_color(age, isblue)
+	local age_colors = {
+		{5, 10},
+		{7, 9},
+		{10, 8},
+		{12, 2},
+		{15, 5}
+	}
+	if isblue then
+		age_colors = {
+			{5, 12},
+			{7, 11},
+			{10, 9},
+			{12, 6},
+			{15, 3}
+		}
+	end
+	for _, age_color in ipairs(age_colors) do
+		if age > age_color[1] then
+			pc = age_color[2]
+		end
+	end
+	return pc
+
+end
+
 function draw_particles()
 	for part in all(particles) do
-		local pc = 7
-
-		local age_colors = {
-			{5, 10},
-			{7, 9},
-			{10, 8},
-			{12, 2},
-			{15, 5}
-		}
-
-		for _, age_color in ipairs(age_colors) do
-			if part.age > age_color[1] then
-				pc = age_color[2]
-			end
-		end
-
-		circfill(part.x, part.y, part.size, pc)
+		circfill(part.x, part.y, part.size, particle_color(part.age, part.blue))
 
 		part.x += part.sx
 		part.y += part.sy
