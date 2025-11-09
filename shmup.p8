@@ -321,6 +321,8 @@ function check_bullet_collisions()
 				game.score += 100
 				
 				del(bullets, bul)
+				make_shwave(bul.x+4, bul.y+4, 3, 6, 9, 1)
+				make_sparkle(enem.x+3, enem.y+3, 1, 9)
 				
 				enem.hp -= 1
 				enem.flash=3
@@ -328,6 +330,8 @@ function check_bullet_collisions()
 					sfx(3)
 					del(enemies, enem)
 					make_particle(enem.x+3, enem.y+3)
+					make_sparkle(enem.x+3, enem.y+3, 20, 12)
+					make_shwave(enem.x+4, enem.y+4, 2, 25, 7, 3.5)
 				end
 			end
 		end
@@ -382,6 +386,7 @@ function draw_game()
 		draw_bullets()
 		draw_enemies()
 		draw_particles()
+		draw_shwaves()
 		draw_ui()
 end
 
@@ -431,6 +436,7 @@ function start_game()
 	init_bullets()
 	init_enemies()
 	init_particles()
+	init_shwaves()
 end
 -->8
 
@@ -499,7 +505,8 @@ function make_particle(x,y, isblue)
 		age=0,
 		maxage=0,
 		size=10,
-		blue=isblue 
+		blue=isblue,
+		spark=spark 
 	}
 
 	add(particles, part)
@@ -529,11 +536,11 @@ function particle_color(age, isblue)
 	}
 	if isblue then
 		age_colors = {
-			{5, 12},
-			{7, 11},
-			{10, 9},
-			{12, 6},
-			{15, 3}
+			{5, 6},
+			{7, 12},
+			{10, 13},
+			{12, 1},
+			{15, 1}
 		}
 	end
 	for _, age_color in ipairs(age_colors) do
@@ -545,9 +552,30 @@ function particle_color(age, isblue)
 
 end
 
+function make_sparkle(x,y, cnt, speed) 
+	for i=1,cnt do
+		local part={
+			x=x,
+			y=y,
+			sx=(rnd()-0.5)*speed,
+			sy=(rnd()-1)*speed,
+			age=rnd(2),
+			maxage=10+rnd(10),
+			size=1+rnd(4),
+			spark=true
+		}
+
+		add(particles, part)
+	end
+end
+
 function draw_particles()
 	for part in all(particles) do
-		circfill(part.x, part.y, part.size, particle_color(part.age, part.blue))
+		if part.spark then
+			pset(part.x, part.y, 7)
+		else
+			circfill(part.x, part.y, part.size, particle_color(part.age, part.blue))
+		end
 
 		part.x += part.sx
 		part.y += part.sy
@@ -561,6 +589,32 @@ function draw_particles()
 			if part.size < 0 then
 				del(particles, part)
 			end
+		end
+	end
+end
+
+function init_shwaves()
+	shwaves = {}
+end
+
+function make_shwave(x,y, r, maxr, col, speed)
+	local sw={
+		x=x,
+		y=y,
+		r=r,
+		maxr=maxr,
+		col=col,
+		speed=speed
+	}
+	add(shwaves, sw)
+end
+
+function draw_shwaves()
+	for sw in all(shwaves) do
+		circ(sw.x, sw.y, sw.r, sw.col)
+		sw.r += sw.speed
+		if sw.r > sw.maxr then
+			del(shwaves, sw)
 		end
 	end
 end
