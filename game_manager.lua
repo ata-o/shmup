@@ -9,8 +9,10 @@ function debug()
 end
 
 function make_game()
+	t=0
 	game={}
-	game.stage = "wavetext"
+	game.stage = "start"
+	
 	game.score = 0
 	game.life = 3
 	game.maxlife = 4
@@ -87,48 +89,12 @@ function check_bullet_collisions()
 					make_particle(enem.x+3, enem.y+3)
 					make_sparkle(enem.x+3, enem.y+3, 20, 12)
 					make_shwave(enem.x+4, enem.y+4, 2, 25, 7, 3.5)
+
+					if #enemies == 0 then
+						next_wave()
+					end
 				end
 			end
 		end
-	end
-end
-
--->8
---background
-
-function make_background()
-	stars = {}
-	for i=1, 50 do
-		local elem = {
-			x = flr(rnd(128)),
-			y = flr(rnd(128)),
-			spd = rnd(1.2)+0.2
-		}
-		
-		if elem.spd < 0.75 then
-			elem.col = 1
-		elseif elem.spd < 1 then
-		 elem.col = 8
-		else
-		 elem.col = 7
-		end
-		
-		add(stars, elem)
-	end
-end
-
-function draw_background()
-	for star in all(stars) do
-		--if star.spd < 1.5 then
-		--	pset(star.x, star.y, star.col)
-		--else
-		--	line(star.x, star.y, star.x, star.y-2, star.col)
-		--end
-		pset(star.x, star.y, star.col)
-		
-		if star.y >= 128 then
-			star.y = 0
-		end
-			star.y += star.spd
 	end
 end

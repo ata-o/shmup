@@ -1,7 +1,7 @@
 function init_enemies()
 	enemies = {}
-	 for i=1,5 do
-		spawn_enemy(20+(i*20))
+	 for i=1,2 do
+		spawn_enemy(0+(i*20))
 	 end
 end
 
@@ -42,4 +42,21 @@ function move_enemies()
 			del(enemies, enem)
 		end
  	end	
+end
+
+function spawn_wave(wave)
+	for i=1,2 do
+		spawn_enemy(rnd(120))
+	end
+end
+
+function next_wave()
+	game.wave += 1
+	if game.wave > 4 then
+		game.stage = "win"
+	else
+		game.wavetime = 80
+		game.stage = "wavetext"
+	end
+	
 end

@@ -1,4 +1,3 @@
-
 function make_background()
 	stars = {}
 	for i=1, 50 do
@@ -11,7 +10,9 @@ function make_background()
 		if elem.spd < 0.75 then
 			elem.col = 1
 		elseif elem.spd < 1 then
-		 elem.col = 8
+		 elem.col = 5
+		 elseif elem.spd < 1.25 then
+		 elem.col = 6
 		else
 		 elem.col = 7
 		end
