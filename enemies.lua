@@ -5,14 +5,34 @@ function init_enemies()
 	 end
 end
 
-function spawn_enemy(x)
+function spawn_enemy(x, entype)
 	local myen={
 		x=x,
 		y=-8,
 		spr=21,
 		hp=5,
-		flash=0
+		flash=0,
+		ani={21,22,23,24},
+		aniframe=1,
+		sprw=1,
+		sprh=1
 	}
+
+	--red flame
+	if entype == 2 then
+		myen.spr = 148 --149
+		myen.ani={148,149}
+	end
+	if entype == 3 then
+		myen.spr = 184 --187
+		myen.ani={184,185,186,187}
+	end
+	if entype == 4 then
+		myen.spr = 208
+		myen.ani={208,210}
+		myen.sprw=2
+		myen.sprh=2
+	end
 	add(enemies, myen)
 end
 
@@ -25,7 +45,14 @@ function draw_enemies()
 				pal(i,7)
 			end
 		end
-		draw_object(enem)
+
+		--animate
+		enem.aniframe += 0.4
+		enem.spr = enem.ani[flr(enem.aniframe)]
+		if flr(enem.aniframe) >= #enem.ani then
+			enem.aniframe = 1
+		end
+		draw_object(enem,sprw,sprh)
 		pal()
  	end	
 end
@@ -33,10 +60,6 @@ end
 function move_enemies()
 	for enem in all(enemies) do
  		enem.y += 0.5
-		enem.spr += 0.4
-		if enem.spr >= 25 then
-			enem.spr = 21
-		end
 
 		if enem.y>128 then
 			del(enemies, enem)
@@ -46,7 +69,8 @@ end
 
 function spawn_wave(wave)
 	for i=1,2 do
-		spawn_enemy(rnd(120))
+		local entype = game.wave
+		spawn_enemy(rnd(120), entype)
 	end
 end
 

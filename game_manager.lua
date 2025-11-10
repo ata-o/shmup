@@ -52,7 +52,7 @@ function draw_bombs()
 end
 
 function draw_object(obj)
-	spr(obj.spr, obj.x, obj.y)
+	spr(obj.spr, obj.x, obj.y, obj.sprw, obj.sprh)
 end
 
 function collide(a,b)

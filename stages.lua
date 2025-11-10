@@ -15,6 +15,7 @@ function update_game()
 		move_ship()
 		move_bullets()
 		move_enemies()
+		move_background()
 
 		check_ship_bounds()
 		check_bullet_collisions()
@@ -58,8 +59,8 @@ function update_wavetext()
 end
 
 function draw_gameover()
-	cls(8)
-	print("game over!", 45, 45,6)
+	draw_game()
+	print("game over!", 47, 40, 8)
 	print("final score: ".. game.score, 30, 60, 6)
 	print("press ❎ key to restart", 20, 80, blink())
 
@@ -79,7 +80,7 @@ function update_gameover()
 end
 
 function draw_win()
-	cls(3)
+	draw_game()
 	print("congratulations!", 30, 45,6)
 	print("final score: " .. game.score, 30, 60, 6)
 	print("press any key to restart", 20, 80, blink())
@@ -102,7 +103,7 @@ function start_game()
 	game.stage="start"
 
 	game.score = 0
-	game.life = game.maxlife
+	game.life = 1
 	game.blinkt = 1
  	make_background()
 	make_ship()

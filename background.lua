@@ -29,7 +29,11 @@ function draw_background()
 		--	line(star.x, star.y, star.x, star.y-2, star.col)
 		--end
 		pset(star.x, star.y, star.col)
-		
+	end
+end
+
+function move_background()
+	for star in all(stars) do
 		if star.y >= 128 then
 			star.y = 0
 		end

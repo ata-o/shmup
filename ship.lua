@@ -24,6 +24,9 @@ function make_ship()
 	ship.xceed = ship.speed
 	ship.yceed = ship.speed
 	
+	ship.sprh=1
+	ship.sprw=1
+	
 	screen={}
 	screen.high=120
 	screen.low=0
@@ -39,12 +42,14 @@ end
 
 function draw_ship()
 	--todo: use pal color flash when hit
-	if ship.invulnerable > 0 then
-		if sin(t/4) < 0.5 then
+	if game.life > 0 then
+		if ship.invulnerable > 0 then
+			if sin(t/4) < 0.5 then
+				draw_ship_sprites()
+			end
+		else
 			draw_ship_sprites()
 		end
-	else
-		draw_ship_sprites()
 	end
 end
 
@@ -68,6 +73,8 @@ function check_collisions()
 			sfx(2)
 			ship.invulnerable = 200
 			make_particle(ship.x+3, ship.y+3, true)
+			make_sparkle(ship.x+3, ship.y+3, 20, 12)
+			make_shwave(ship.x+3, ship.y+3, 2, 25, 7, 3.5)
 		end
 		if ship.invulnerable > 0 then
 			ship.invulnerable -= 1
@@ -173,34 +180,10 @@ function make_bullet(cnt)
 			y=ship.y-5,
 			speed=5,
 			spr=32,
-			orient=i
+			orient=i,
+			sprw=1,
+			sprh=1
 		}
 		add(bullets, bul)
 	end
-end
-
-function init_bullets()
-	bullets={}
-end
-
-function draw_bullets()
-	for bul in all(bullets) do
-		draw_object(bul)
- 	end
-end
-
-function move_bullets()
-	for bul in all(bullets) do
-		bul.y -= bul.speed
-		bul.x += bul.orient * (bul.speed/8)
-	
-		bul.spr += 1
-		if bul.spr > 36 then
-			bul.spr = 32
-		end
-
- 		if bul.y < -8 or bul.x < -8 or bul.x > 127 then
-			del(bullets, bul)
-		end
- 	end
 end

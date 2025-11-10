@@ -6,7 +6,9 @@ function make_bullet(cnt)
 			y=ship.y-5,
 			speed=5,
 			spr=32,
-			orient=i
+			orient=i,
+			sprw=1,
+			sprh=1
 		}
 		add(bullets, bul)
 	end
