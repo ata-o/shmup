@@ -34,7 +34,7 @@ function update_start()
 	end
 	if btnreleased  then
 		if btnp(4) or btnp(5) then
-			music(-1, 3000)
+			--music(-1, 3000)
 			btnreleased = false
 			start_game()
 			game.wave=0
@@ -72,7 +72,7 @@ function update_gameover()
 	if btnreleased  then
 		if btnp(4) or btnp(5) then
 			btnreleased = false
-			music(0)
+			--music(0)
 			start_game()
 		end
 	end
@@ -92,7 +92,7 @@ function update_win()
 	if btnreleased  then
 		if btnp(4) or btnp(5) then
 			btnreleased = false
-			music(0)
+			--music(0)
 			start_game()
 		end
 	end

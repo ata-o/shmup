@@ -1,7 +1,7 @@
 function _init()
 	cls(0)
 	make_game()
-	music(0)
+	--music(0)
 end
 
 function _draw()
