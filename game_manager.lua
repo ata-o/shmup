@@ -5,7 +5,8 @@ function debug()
 	--print(ship.speed, 20,30)
 	--lin = "sprite: " .. ship.sprite
 	--print(line, 20,20)
-	--print(ship.x, 6,20)
+	print(t, 5,5,7)
+	print(game.lockout)
 end
 
 function make_game()
@@ -18,6 +19,8 @@ function make_game()
 	game.maxlife = 4
 	game.lifespr = 11
 	game.lifeempty = 12
+	
+	game.lockout = 0
 	
 	game.bombs = 3
 	game.bombspr = 14
@@ -65,6 +68,7 @@ end
 function check_life()
 	if game.life <= 0 then
 		game.stage="over"
+		game.lockout=t+30
 	end
 end
 

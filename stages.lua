@@ -10,8 +10,6 @@ function draw_game()
 end
 
 function update_game()
-		game.blinkt+=1
-		t+=1
 		move_ship()
 		move_bullets()
 		move_enemies()
@@ -21,6 +19,11 @@ function update_game()
 		check_bullet_collisions()
 		check_collisions()
 		check_life()
+
+		if #enemies == 0 and game.stage == "game" then
+			next_wave()
+		end
+
 end
 
 function draw_start()
@@ -67,6 +70,9 @@ function draw_gameover()
 end
 
 function update_gameover()
+	if t < game.lockout then
+		return
+	end
 	if btn(4) == false and btn(5) == false then
 		btnreleased = true
 	end
@@ -87,6 +93,9 @@ function draw_win()
 end
 
 function update_win()
+	if t < game.lockout then
+		return
+	end
 	if btn(4) == false and btn(5) == false then
 		btnreleased = true
 	end

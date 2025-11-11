@@ -78,6 +78,7 @@ function next_wave()
 	game.wave += 1
 	if game.wave > 4 then
 		game.stage = "win"
+		game.lockout=t+30
 		music(4)
 	else
 		if wave == 1 then

@@ -7,6 +7,8 @@ end
 function _draw()
 	cls(0)
 	--debug()
+	game.blinkt+=1
+	t+=1
 	if game.stage=="game" then
 		draw_game()
 	elseif game.stage=="start" then
