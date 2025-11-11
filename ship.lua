@@ -33,6 +33,7 @@ function draw_ship_sprites()
 	spr(ship.flamespr,ship.x,ship.y+7)
 	if ship.muzzle >0 then
 		circfill(ship.x+3, ship.y-2, ship.muzzle, 7)
+		circfill(ship.x+4, ship.y-2, ship.muzzle, 7)
 	end
 end
 

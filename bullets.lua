@@ -2,11 +2,12 @@ function make_bullet(cnt)
 	bullet_count = flr(cnt/2)
 	for i=-bullet_count, bullet_count do
 		local bul = make_object()
-		bul.x=ship.x
+		bul.x=ship.x+1
 		bul.y=ship.y-5
 		bul.speed=5
 		bul.spr=32
 		bul.orient=i
+		bul.colw=6
 		add(bullets, bul)
 	end
 end
