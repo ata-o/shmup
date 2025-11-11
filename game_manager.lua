@@ -58,11 +58,35 @@ function draw_object(obj)
 	spr(obj.spr, obj.x, obj.y, obj.sprw, obj.sprh)
 end
 
+function make_object()
+	local obj={
+		x=0,
+		y=0,
+		flash=0,
+		aniframe=1,
+		spr=0,
+		sprw=1,
+		sprh=1,
+		colw=8,
+		colh=8
+	}
+	return obj
+end
+
 function collide(a,b)
-	return not (a.x > b.x + 7 or
-			  a.x + 7 < b.x or
-			  a.y > b.y + 7 or
-			  a.y + 7 < b.y)
+	if a == nil then
+        print("a is nil", 5, 5, 7)
+        return false
+    end
+    if a.colw == nil then
+        print("a.colw is nil, a.spr=" .. a.spr, 5, 5, 7)
+        return false
+    end
+	print(a.colw, 5,5,7)
+	return not (a.x > b.x + b.colw - 1 or
+			  a.x + a.colw - 1 < b.x or
+			  a.y > b.y + b.colh -1 or
+			  a.y + a.colh -1 < b.y)
 end
 
 function check_life()

@@ -1,8 +1,7 @@
 function make_ship()
-	ship={}
+	ship=make_object()
 	ship.x=64
 	ship.y=64
-
 	
 	--sprites
 	ship.spr = 1
@@ -23,9 +22,6 @@ function make_ship()
 	ship.speed = 2
 	ship.xceed = ship.speed
 	ship.yceed = ship.speed
-	
-	ship.sprh=1
-	ship.sprw=1
 	
 	screen={}
 	screen.high=120
@@ -166,24 +162,5 @@ function dvd_bounce(low, high)
 	end
 	if (ship.x == ship.y) then
 		ship.x +=1
-	end
-end
-
--->8
---bullets
-
-function make_bullet(cnt)
-	bullet_count = flr(cnt/2)
-	for i=-bullet_count, bullet_count do
-		local bul = {
-			x=ship.x,
-			y=ship.y-5,
-			speed=5,
-			spr=32,
-			orient=i,
-			sprw=1,
-			sprh=1
-		}
-		add(bullets, bul)
 	end
 end

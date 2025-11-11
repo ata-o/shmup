@@ -3,9 +3,9 @@ version 43
 __lua__
 --main
 #include background.lua
+#include game_manager.lua
 #include bullets.lua
 #include enemies.lua
-#include game_manager.lua
 #include loop.lua
 #include particles.lua
 #include ship.lua

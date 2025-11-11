@@ -1,22 +1,15 @@
 function init_enemies()
 	enemies = {}
-	 for i=1,2 do
-		spawn_enemy(0+(i*20))
-	 end
+	
 end
 
 function spawn_enemy(x, entype)
-	local myen={
-		x=x,
-		y=-8,
-		spr=21,
-		hp=5,
-		flash=0,
-		ani={21,22,23,24},
-		aniframe=1,
-		sprw=1,
-		sprh=1
-	}
+	local myen= make_object()
+	myen.x=x
+	myen.y=-8
+	myen.spr=21
+	myen.hp=5
+	myen.ani={21,22,23,24}
 
 	--red flame
 	if entype == 2 then
@@ -32,6 +25,8 @@ function spawn_enemy(x, entype)
 		myen.ani={208,210}
 		myen.sprw=2
 		myen.sprh=2
+		myen.colh=16
+		myen.colw=16
 	end
 	add(enemies, myen)
 end
@@ -52,7 +47,7 @@ function draw_enemies()
 		if flr(enem.aniframe) >= #enem.ani then
 			enem.aniframe = 1
 		end
-		draw_object(enem,sprw,sprh)
+		draw_object(enem)
 		pal()
  	end	
 end
