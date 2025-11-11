@@ -73,7 +73,7 @@ function update_gameover()
 	if btnreleased  then
 		if btnp(4) or btnp(5) then
 			btnreleased = false
-			--music(0)
+			music(6)
 			start_game()
 		end
 	end
@@ -93,7 +93,6 @@ function update_win()
 	if btnreleased  then
 		if btnp(4) or btnp(5) then
 			btnreleased = false
-			--music(0)
 			start_game()
 		end
 	end

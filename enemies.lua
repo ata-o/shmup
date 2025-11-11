@@ -78,7 +78,13 @@ function next_wave()
 	game.wave += 1
 	if game.wave > 4 then
 		game.stage = "win"
+		music(4)
 	else
+		if wave == 1 then
+			music(0)
+		else
+			music(3)
+		end
 		game.wavetime = 80
 		game.stage = "wavetext"
 	end

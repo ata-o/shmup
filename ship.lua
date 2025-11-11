@@ -70,7 +70,7 @@ function check_collisions()
 	for enem in all(enemies) do
 		if collide(ship, enem) and ship.invulnerable == 0 then
 			game.life -= 1
-			sfx(2)
+			sfx(1)
 			ship.invulnerable = 200
 			make_particle(ship.x+3, ship.y+3, true)
 			make_sparkle(ship.x+3, ship.y+3, 20, 12)

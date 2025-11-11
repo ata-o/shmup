@@ -74,7 +74,7 @@ function check_bullet_collisions()
 			if collide(bul, enem) then
 				-- TODO: add explosion effect
 				-- TODO: add enemy death anim
-				sfx(4)
+				sfx(3)
 				game.score += 100
 				
 				del(bullets, bul)
@@ -84,7 +84,7 @@ function check_bullet_collisions()
 				enem.hp -= 1
 				enem.flash=3
 				if enem.hp <= 0 then
-					sfx(3)
+					sfx(2)
 					del(enemies, enem)
 					make_particle(enem.x+3, enem.y+3)
 					make_sparkle(enem.x+3, enem.y+3, 20, 12)
