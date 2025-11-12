@@ -108,7 +108,7 @@ function player_move()
 		else
 			ship.shottimer = 3
 			ship.muzzle=5
-			make_bullet(1)
+			make_bullet(3)
 			sfx(0)
 		end
 	end

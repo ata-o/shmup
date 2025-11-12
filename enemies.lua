@@ -3,13 +3,18 @@ function init_enemies()
 	
 end
 
-function spawn_enemy(x, entype)
+function spawn_enemy(entype, x, y)
 	local myen= make_object()
 	myen.x=x
-	myen.y=-8
+	myen.y=y-66
+
+	myen.posx=x
+	myen.posy=y
+
 	myen.spr=21
-	myen.hp=5
+	myen.hp=1
 	myen.ani={21,22,23,24}
+	myen.act="fly"
 
 	--red flame
 	if entype == 2 then
@@ -54,8 +59,8 @@ end
 
 function move_enemies()
 	for enem in all(enemies) do
- 		enem.y += 0.5
-
+		enemy_act(enem)
+		--enem.y+=1
 		if enem.y>128 then
 			del(enemies, enem)
 		end
@@ -63,9 +68,45 @@ function move_enemies()
 end
 
 function spawn_wave(wave)
-	for i=1,2 do
-		local entype = game.wave
-		spawn_enemy(rnd(120), entype)
+	local entype = game.wave
+	if entype==1 then
+		placenems({
+			{0,1,1,1,1,1,1,1,1,0},
+			{0,1,1,1,1,1,1,1,1,0},
+			{0,1,1,1,1,1,1,1,1,0},
+			{0,1,1,1,1,1,1,1,1,0},
+		})
+	elseif entype==2 then
+		placenems({
+			{1,1,2,2,1,1,2,2,1,1},
+			{1,1,2,2,1,1,2,2,1,1},
+			{1,1,2,2,2,2,2,2,1,1},
+			{1,1,2,2,2,2,2,2,1,1},
+		})
+	elseif entype==3 then	
+		placenems({
+			{3,3,0,2,2,2,2,0,3,3},
+			{3,3,0,2,2,2,2,0,3,3},
+			{3,3,0,2,2,2,2,0,3,3},
+			{3,3,0,2,2,2,2,0,3,3},
+		})
+	elseif entype==4 then
+		placenems({
+			{0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,4,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0},
+		})
+	end
+end
+
+function placenems(lvl)
+	for y=1,4 do
+		for x=1,10 do
+			if lvl[y][x]!=0 then
+				spawn_enemy(lvl[y][x], x*12-6, 4+y*12)
+			end
+		end
 	end
 end
 
@@ -85,4 +126,15 @@ function next_wave()
 		game.stage = "wavetext"
 	end
 	
+end
+
+function enemy_act(enem)
+	if enem.act=="fly" then
+		enem.y += 1
+		if enem.y>=enem.posy then
+			enem.act="protec"
+		end
+	elseif enem.act=="protec" then
+	elseif enem.act=="attac" then
+	end
 end
