@@ -25,6 +25,7 @@ function make_game()
 	game.bombs = 3
 	game.bombspr = 14
 	game.bombempty = 15
+
 	start_game()
 end
 
@@ -55,7 +56,13 @@ function draw_bombs()
 end
 
 function draw_object(obj)
-	spr(obj.spr, obj.x, obj.y, obj.sprw, obj.sprh)
+	local sprx=obj.x
+	local spry=obj.y
+	if obj.shake>0 then
+		obj.shake-=1
+		sprx+=abs(sin(t/2.5))
+	end
+	spr(obj.spr, sprx, spry, obj.sprw, obj.sprh)
 end
 
 function make_object()
@@ -63,6 +70,7 @@ function make_object()
 		x=0,
 		y=0,
 		flash=0,
+		shake=0,
 		aniframe=1,
 		spr=0,
 		sprw=1,

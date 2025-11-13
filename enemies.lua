@@ -11,10 +11,19 @@ function spawn_enemy(entype, x, y, enwait)
 	myen.posx=x
 	myen.posy=y
 
+	myen.sx=0
+	myen.sy=0
+
+	myen.type=entype
+
 	myen.spr=21
 	myen.hp=1
 	myen.ani={21,22,23,24}
+
+	myen.anispd=0.4
+
 	myen.act="fly"
+	myen.shakertime=0
 
 	myen.wait=enwait
 
@@ -49,7 +58,7 @@ function draw_enemies()
 		end
 
 		--animate
-		enem.aniframe += 0.4
+		enem.aniframe += enem.anispd
 		enem.spr = enem.ani[flr(enem.aniframe)]
 		if flr(enem.aniframe) >= #enem.ani then
 			enem.aniframe = 1
@@ -64,8 +73,10 @@ function move_enemies()
 		enemy_act(enem)
 		--enem.y+=1
 		
-		if enem.y>128 then
-			del(enemies, enem)
+		if enem.act != "fly" then
+			if enem.y>128 or enem.x<-8 or enem.x>128 then
+				del(enemies, enem)
+			end
 		end
  	end
 	random_atk_enemy()
@@ -73,6 +84,7 @@ end
 
 function spawn_wave(wave)
 	sfx(28)
+	attackfreq=60
 	local entype = game.wave
 	if entype==1 then
 		placenems({
@@ -151,8 +163,52 @@ function enemy_act(enem)
 		end
 	elseif enem.act=="protec" then
 	elseif enem.act=="attac" then
-		enem.y+=1.7
+		if enem.type==1 then
+			enem.sy=1.7
+			enem.sx=sin(t/45)
+			if enem.x<32 then
+				enem.x+=1-(enem.x/32)
+			end
+
+			if enem.x>88 then
+				enem.x+=(enem.x-88)/32
+			end
+		elseif enem.type==2 then
+			enem.sy=2.5
+			enem.sx=sin(t/25)
+			if enem.x<32 then
+				enem.x+=1-(enem.x/32)
+			end
+
+			if enem.x>88 then
+				enem.x+=(enem.x-88)/32
+			end
+		elseif enem.type==3 then
+			if enem.sx==0 then
+				--flying down
+				enem.sy=2
+				if ship.y <= enem.y then
+					enem.sy=0
+					if ship.x <= enem.x then
+					enem.sx=-2
+					else
+					enem.sx=2
+					end
+				end
+			end
+		elseif enem.type==4 then
+			enem.sy=0.2
+			if enem.y>110 then
+				enem.sy=1
+			end
+		end
+		move(enem)
 	end
+end
+
+function move(obj)
+	obj.x+=obj.sx
+	obj.y+=obj.sy
 end
 
 function random_atk_enemy()
@@ -160,13 +216,22 @@ function random_atk_enemy()
 		return
 	end
 	-- dice = rnd({1,2,3,4,5,6})
-	local seconds = flr(time())
-	local stuff = seconds % 60
+	--local seconds = flr(time())
+	--local stuff = seconds % 60
 
-	if t%60==0 then
-		local myen = rnd(enemies)
+	if t%attackfreq==0 then
+		local maxnum = min(10, #enemies)
+
+		local ind = flr(rnd(maxnum))
+		ind = #enemies - ind
+
+		local myen = enemies[ind]
+
 		if myen.act=="protec" then
 			myen.act="attac"
+			myen.anispd*=3
+			myen.shake=60
+			myen.wait=60
 		end
 	end
 end
