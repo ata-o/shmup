@@ -3,9 +3,9 @@ function init_enemies()
 	
 end
 
-function spawn_enemy(entype, x, y)
+function spawn_enemy(entype, x, y, enwait)
 	local myen= make_object()
-	myen.x=x
+	myen.x=1.5*(x-32)
 	myen.y=y-66
 
 	myen.posx=x
@@ -15,6 +15,8 @@ function spawn_enemy(entype, x, y)
 	myen.hp=1
 	myen.ani={21,22,23,24}
 	myen.act="fly"
+
+	myen.wait=enwait
 
 	--red flame
 	if entype == 2 then
@@ -61,20 +63,23 @@ function move_enemies()
 	for enem in all(enemies) do
 		enemy_act(enem)
 		--enem.y+=1
+		
 		if enem.y>128 then
 			del(enemies, enem)
 		end
- 	end	
+ 	end
+	random_atk_enemy()
 end
 
 function spawn_wave(wave)
+	sfx(28)
 	local entype = game.wave
 	if entype==1 then
 		placenems({
-			{0,1,1,1,1,1,1,1,1,0},
-			{0,1,1,1,1,1,1,1,1,0},
-			{0,1,1,1,1,1,1,1,1,0},
-			{0,1,1,1,1,1,1,1,1,0},
+			{1,1,1,1,1,1,1,1,1,1},
+			{1,1,1,1,1,1,1,1,1,1},
+			{1,1,1,1,1,1,1,1,1,1},
+			{1,1,1,1,1,1,1,1,1,1},
 		})
 	elseif entype==2 then
 		placenems({
@@ -104,7 +109,7 @@ function placenems(lvl)
 	for y=1,4 do
 		for x=1,10 do
 			if lvl[y][x]!=0 then
-				spawn_enemy(lvl[y][x], x*12-6, 4+y*12)
+				spawn_enemy(lvl[y][x], x*12-6, 4+y*12, x*3)
 			end
 		end
 	end
@@ -129,12 +134,39 @@ function next_wave()
 end
 
 function enemy_act(enem)
+	if enem.wait>0 then
+		enem.wait -= 1
+		return
+	end
+
 	if enem.act=="fly" then
-		enem.y += 1
-		if enem.y>=enem.posy then
+		--interpolation
+		--x += (targetx - x) / n
+		enem.x+= (enem.posx - enem.x)/8
+		enem.y += (enem.posy - enem.y)/8
+
+		
+		if abs(enem.y-enem.posy) < 0.7 then
 			enem.act="protec"
 		end
 	elseif enem.act=="protec" then
 	elseif enem.act=="attac" then
+		enem.y+=1.7
+	end
+end
+
+function random_atk_enemy()
+	if game.stage != "game" then
+		return
+	end
+	-- dice = rnd({1,2,3,4,5,6})
+	local seconds = flr(time())
+	local stuff = seconds % 60
+
+	if t%60==0 then
+		local myen = rnd(enemies)
+		if myen.act=="protec" then
+			myen.act="attac"
+		end
 	end
 end
