@@ -66,6 +66,10 @@ function draw_object(obj)
 			sprx+=1
 		end
 	end
+	if obj.bulmode then
+		sprx-=2
+		spry-=2
+	end
 	spr(obj.spr, sprx, spry, obj.sprw, obj.sprh)
 end
 
@@ -73,6 +77,8 @@ function make_object()
 	local obj={
 		x=0,
 		y=0,
+		sx=0,
+		sy=0,
 		flash=0,
 		shake=0,
 		aniframe=1,

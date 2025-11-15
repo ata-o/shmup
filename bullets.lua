@@ -8,6 +8,7 @@ function make_bullet(cnt)
 		bul.spr=32
 		bul.orient=i
 		bul.colw=6
+		bul.bulmode=true
 		add(bullets, bul)
 	end
 end
@@ -20,10 +21,12 @@ function make_ebullet(enem)
 	ebul.ani={48,49,50,49}
 	ebul.anispd=0.5
 	ebul.sy=1
-	ebul.sx=0
 	ebul.colw=6
 	ebul.colh=6
+	
+	enem.flash=3
 	add(ebullets, ebul)
+	sfx(29)
 end
 
 function init_bullets()
@@ -45,11 +48,6 @@ function move_bullets()
 	for bul in all(bullets) do
 		bul.y -= bul.speed
 		bul.x += bul.orient * (bul.speed/8)
-	
-		--bul.spr += 1
-		--if bul.spr > 36 then
-		--	bul.spr = 32
-		--end
 
  		if bul.y < -8 or bul.x < -8 or bul.x > 127 then
 			del(bullets, bul)

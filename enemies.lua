@@ -75,12 +75,13 @@ function move_enemies()
 			end
 		end
  	end
-	random_atk_enemy()
+	picktimer()
 end
 
 function spawn_wave(wave)
 	sfx(28)
 	attackfreq=60
+	nextfire=0
 	local entype = game.wave
 	if entype==1 then
 		placenems({
@@ -214,7 +215,7 @@ function kill_enemy(enem)
 	end
 end
 
-function random_atk_enemy()
+function picktimer()
 	if game.stage != "game" then
 		return
 	end
@@ -222,8 +223,29 @@ function random_atk_enemy()
 	--local seconds = flr(time())
 	--local stuff = seconds % 60
 
+	if t>nextfire then
+		pick_fire()
+		nextfire=t+20+rnd(20)
+	end
+
 	if t%attackfreq==0 then
 		pick_attacker()
+	end
+end
+
+function pick_fire()
+	local maxnum = min(10, #enemies)
+
+	local ind = flr(rnd(maxnum))
+	ind = #enemies - ind
+	local myen = enemies[ind]
+
+	if myen==nil then 
+		return 
+	end
+
+	if myen.act=="protec" then
+		make_ebullet(myen)
 	end
 end
 
@@ -239,10 +261,9 @@ function pick_attacker()
 	end
 
 	if myen.act=="protec" then
-		--myen.act="attac"
-		--myen.anispd*=3
-		--myen.shake=60
-		--myen.wait=60
-		make_ebullet(myen)
+		myen.act="attac"
+		myen.anispd*=3
+		myen.shake=60
+		myen.wait=60
 	end
 end
