@@ -114,7 +114,7 @@ function check_bullet_collisions()
 			if collide(bul, enem) then
 				-- TODO: add explosion effect
 				-- TODO: add enemy death anim
-				sfx(3)
+				sfx(1)
 				game.score += 100
 				
 				del(bullets, bul)
@@ -134,13 +134,35 @@ function check_bullet_collisions()
 	end
 end
 
+function check_ebullet_collisions()
+	for bul in all(ebullets) do
+		if collide(bul, ship) and ship.invulnerable == 0 then
+			sfx(1)
+			
+			del(ebullets, bul)
+			
+			game.life -= 1
+			ship.invulnerable = 200
+			explode(ship.x+3,ship.y+3, 1)
+		end
+	end
+end
+
 function move(obj)
 	obj.x+=obj.sx
 	obj.y+=obj.sy
 end
 
-function explode(x, y)
-	make_particle(x, y)
+function explode(x, y, isblue)
+	make_particle(x, y, isblue)
 	make_sparkle(x, y, 20, 12)
 	make_shwave(x, y, 2, 25, 7, 3)
+end
+
+function animate(obj)
+	obj.aniframe += obj.anispd
+	obj.spr = obj.ani[flr(obj.aniframe)]
+	if flr(obj.aniframe) >= #obj.ani then
+		obj.aniframe = 1
+	end
 end

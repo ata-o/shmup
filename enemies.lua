@@ -58,11 +58,7 @@ function draw_enemies()
 		end
 
 		--animate
-		enem.aniframe += enem.anispd
-		enem.spr = enem.ani[flr(enem.aniframe)]
-		if flr(enem.aniframe) >= #enem.ani then
-			enem.aniframe = 1
-		end
+		animate(enem)
 		draw_object(enem)
 		pal()
  	end	
@@ -212,7 +208,9 @@ function kill_enemy(enem)
 	explode(enem.x+3, enem.y+4)
 
 	if enem.act=="attac" then
-		pick_attacker()
+		if rnd() < 0.5 then
+			pick_attacker()
+		end
 	end
 end
 
@@ -241,9 +239,10 @@ function pick_attacker()
 	end
 
 	if myen.act=="protec" then
-		myen.act="attac"
-		myen.anispd*=3
-		myen.shake=60
-		myen.wait=60
+		--myen.act="attac"
+		--myen.anispd*=3
+		--myen.shake=60
+		--myen.wait=60
+		make_ebullet(myen)
 	end
 end

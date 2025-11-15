@@ -17,6 +17,7 @@ function update_game()
 
 		check_ship_bounds()
 		check_bullet_collisions()
+		check_ebullet_collisions()
 		check_collisions()
 		check_life()
 

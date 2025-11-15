@@ -12,12 +12,31 @@ function make_bullet(cnt)
 	end
 end
 
+function make_ebullet(enem)
+	local ebul = make_object()
+	ebul.x=enem.x
+	ebul.y=enem.y
+	ebul.spr=48
+	ebul.ani={48,49,50,49}
+	ebul.anispd=0.5
+	ebul.sy=1
+	ebul.sx=0
+	ebul.colw=6
+	ebul.colh=6
+	add(ebullets, ebul)
+end
+
 function init_bullets()
 	bullets={}
+	ebullets={}
 end
 
 function draw_bullets()
 	for bul in all(bullets) do
+		draw_object(bul)
+ 	end
+	for bul in all(ebullets) do
+		animate(bul)
 		draw_object(bul)
  	end
 end
@@ -36,4 +55,11 @@ function move_bullets()
 			del(bullets, bul)
 		end
  	end
+
+	for bul in all(ebullets) do
+		move(bul)
+		if bul.y < -8 or bul.x < -8 or bul.x > 127 or bul.y<-8  then
+			del(ebullets, bul)
+		end
+	end
 end

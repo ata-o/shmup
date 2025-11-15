@@ -69,7 +69,7 @@ function check_collisions()
 			game.life -= 1
 			sfx(1)
 			ship.invulnerable = 200
-			explode(ship.x+3, ship.y+3)
+			explode(ship.x+3, ship.y+3, 1)
 		end
 		if ship.invulnerable > 0 then
 			ship.invulnerable -= 1
