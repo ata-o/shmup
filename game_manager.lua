@@ -60,7 +60,11 @@ function draw_object(obj)
 	local spry=obj.y
 	if obj.shake>0 then
 		obj.shake-=1
-		sprx+=abs(sin(t/2.5))
+		--sprx+=abs(sin(t/2.5)*1.2)
+		--TODO: experiment with this
+		if t%4 < 2 then
+			sprx+=1
+		end
 	end
 	spr(obj.spr, sprx, spry, obj.sprw, obj.sprh)
 end
@@ -120,17 +124,23 @@ function check_bullet_collisions()
 				enem.hp -= 1
 				enem.flash=3
 				if enem.hp <= 0 then
-					sfx(2)
-					del(enemies, enem)
-					make_particle(enem.x+3, enem.y+3)
-					make_sparkle(enem.x+3, enem.y+3, 20, 12)
-					make_shwave(enem.x+4, enem.y+4, 2, 25, 7, 3.5)
-
-					if #enemies == 0 then
-						next_wave()
-					end
+					kill_enemy(enem)
+				end
+				if #enemies == 0 then
+					next_wave()
 				end
 			end
 		end
 	end
+end
+
+function move(obj)
+	obj.x+=obj.sx
+	obj.y+=obj.sy
+end
+
+function explode(x, y)
+	make_particle(x, y)
+	make_sparkle(x, y, 20, 12)
+	make_shwave(x, y, 2, 25, 7, 3)
 end

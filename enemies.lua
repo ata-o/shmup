@@ -181,7 +181,7 @@ function enemy_act(enem)
 			end
 
 			if enem.x>88 then
-				enem.x+=(enem.x-88)/32
+				enem.x-=(enem.x-88)/32
 			end
 		elseif enem.type==3 then
 			if enem.sx==0 then
@@ -206,9 +206,14 @@ function enemy_act(enem)
 	end
 end
 
-function move(obj)
-	obj.x+=obj.sx
-	obj.y+=obj.sy
+function kill_enemy(enem)
+	sfx(2)
+	del(enemies, enem)
+	explode(enem.x+3, enem.y+4)
+
+	if enem.act=="attac" then
+		pick_attacker()
+	end
 end
 
 function random_atk_enemy()
@@ -220,18 +225,25 @@ function random_atk_enemy()
 	--local stuff = seconds % 60
 
 	if t%attackfreq==0 then
-		local maxnum = min(10, #enemies)
+		pick_attacker()
+	end
+end
 
-		local ind = flr(rnd(maxnum))
-		ind = #enemies - ind
+function pick_attacker()
+	local maxnum = min(10, #enemies)
 
-		local myen = enemies[ind]
+	local ind = flr(rnd(maxnum))
+	ind = #enemies - ind
+	local myen = enemies[ind]
 
-		if myen.act=="protec" then
-			myen.act="attac"
-			myen.anispd*=3
-			myen.shake=60
-			myen.wait=60
-		end
+	if myen==nil then 
+		return 
+	end
+
+	if myen.act=="protec" then
+		myen.act="attac"
+		myen.anispd*=3
+		myen.shake=60
+		myen.wait=60
 	end
 end
