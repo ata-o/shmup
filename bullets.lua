@@ -13,16 +13,35 @@ function make_bullet(cnt)
 	end
 end
 
-function make_ebullet(enem)
+function make_ebullet_spread(enem, num, spd, base)
+	--360/8 -> 1/8
+	if base==nil then
+		base=0
+	end
+	for i=1,num do
+		make_ebullet(enem, 1/num*i+base, spd)
+	end
+end
+
+function make_ebullet(enem, ang, spd)
 	local ebul = make_object()
-	ebul.x=enem.x
-	ebul.y=enem.y
+	ebul.x=enem.x+3
+	ebul.y=enem.y+3
+
+	if enem.type==4 then
+		ebul.x=enem.x + 7
+		ebul.y=enem.y + 13
+	end
 	ebul.spr=48
 	ebul.ani={48,49,50,49}
 	ebul.anispd=0.5
-	ebul.sy=1
-	ebul.colw=6
-	ebul.colh=6
+	
+	ebul.sx=sin(ang)*spd
+	ebul.sy=cos(ang)*spd
+
+	ebul.colw=2
+	ebul.colh=2
+	ebul.bulmode=true
 	
 	enem.flash=3
 	add(ebullets, ebul)

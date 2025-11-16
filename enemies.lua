@@ -151,11 +151,14 @@ function enemy_act(enem)
 	if enem.act=="fly" then
 		--interpolation
 		--x += (targetx - x) / n
-		enem.x+= (enem.posx - enem.x)/8
+		enem.x += (enem.posx - enem.x)/8
 		enem.y += (enem.posy - enem.y)/8
 
 		
 		if abs(enem.y-enem.posy) < 0.7 then
+			enem.y = enem.posy
+			enem.x = enem.posx
+
 			enem.act="protec"
 		end
 	elseif enem.act=="protec" then
@@ -195,8 +198,15 @@ function enemy_act(enem)
 			end
 		elseif enem.type==4 then
 			enem.sy=0.2
+
+
+
 			if enem.y>110 then
 				enem.sy=1
+			else
+				if t%30==0 then
+					make_ebullet_spread(enem, 8, 2, rnd())
+				end
 			end
 		end
 		move(enem)
@@ -245,7 +255,8 @@ function pick_fire()
 	end
 
 	if myen.act=="protec" then
-		make_ebullet(myen)
+		make_ebullet(myen, 0, 2)
+		--make_ebullet_spread(myen, 8, 2)
 	end
 end
 
