@@ -11,6 +11,7 @@ end
 
 function make_game()
 	t=0
+	shake=0
 	game={}
 	game.stage = "start"
 	
@@ -109,6 +110,7 @@ end
 
 function check_life()
 	if game.life <= 0 then
+		shake=16
 		game.stage="over"
 		game.lockout=t+30
 	end
@@ -148,6 +150,7 @@ function check_ebullet_collisions()
 			del(ebullets, bul)
 			
 			game.life -= 1
+			shake=12
 			ship.invulnerable = 200
 			explode(ship.x+3,ship.y+3, 1)
 		end
@@ -170,5 +173,20 @@ function animate(obj)
 	obj.spr = obj.ani[flr(obj.aniframe)]
 	if flr(obj.aniframe) >= #obj.ani then
 		obj.aniframe = 1
+	end
+end
+
+function shakescreen()
+	local shakex=rnd(shake)-(shake/2)
+	local shakey=rnd(shake)-(shake/2)
+	camera(shakex, shakey)
+
+	if shake>10 then
+		shake*=0.9
+	else
+		shake-=1
+		if shake < 1 then
+			shake = 0
+		end
 	end
 end

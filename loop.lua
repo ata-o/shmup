@@ -7,6 +7,8 @@ end
 function _draw()
 	cls(0)
 	--debug()
+	shakescreen()
+
 	game.blinkt+=1
 	t+=1
 	if game.stage=="game" then
@@ -20,6 +22,8 @@ function _draw()
 	elseif game.stage=="win" then
 		draw_win()
 	end
+
+	camera()
 end
 
 function _update()

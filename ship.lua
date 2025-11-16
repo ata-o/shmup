@@ -67,6 +67,7 @@ function check_collisions()
 	for enem in all(enemies) do
 		if collide(ship, enem) and ship.invulnerable == 0 then
 			game.life -= 1
+			shake=12
 			sfx(1)
 			ship.invulnerable = 200
 			explode(ship.x+3, ship.y+3, 1)
