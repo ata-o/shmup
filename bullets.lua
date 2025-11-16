@@ -24,10 +24,12 @@ function make_ebullet_spread(enem, num, spd, base)
 end
 
 function make_ebullet_aimed(enem, spd)
-	local ang = atan2(ship.y-enem.y, ship.x-enem.x)
+	ebul = make_ebullet(enem, 0, spd)
 
-	make_ebullet(enem, ang, spd)
+	local ang = atan2((ship.y+4)-ebul.y, (ship.x+4)-ebul.x)
 
+	ebul.sx = sin(ang)*spd
+	ebul.sy = cos(ang)*spd
 end
 
 function make_ebullet(enem, ang, spd)
@@ -53,6 +55,7 @@ function make_ebullet(enem, ang, spd)
 	enem.flash=3
 	add(ebullets, ebul)
 	sfx(29)
+	return ebul
 end
 
 function init_bullets()
