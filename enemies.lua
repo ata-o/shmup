@@ -198,14 +198,11 @@ function enemy_act(enem)
 			end
 		elseif enem.type==4 then
 			enem.sy=0.2
-
-
-
 			if enem.y>110 then
 				enem.sy=1
 			else
-				if t%30==0 then
-					make_ebullet_spread(enem, 8, 2, rnd())
+				if t%25==0 then
+					make_ebullet_spread(enem, 8, 1.3, rnd())
 				end
 			end
 		end
@@ -255,8 +252,13 @@ function pick_fire()
 	end
 
 	if myen.act=="protec" then
-		make_ebullet(myen, 0, 2)
-		--make_ebullet_spread(myen, 8, 2)
+		if myen.type==4 then
+			make_ebullet_spread(myen, 8, 1.3, rnd())
+		elseif myen.type==2 then
+			make_ebullet_aimed(myen, 2)
+		else
+			make_ebullet(myen, 0, 2)
+		end
 	end
 end
 

@@ -23,6 +23,13 @@ function make_ebullet_spread(enem, num, spd, base)
 	end
 end
 
+function make_ebullet_aimed(enem, spd)
+	local ang = atan2(ship.y-enem.y, ship.x-enem.x)
+
+	make_ebullet(enem, ang, spd)
+
+end
+
 function make_ebullet(enem, ang, spd)
 	local ebul = make_object()
 	ebul.x=enem.x+3

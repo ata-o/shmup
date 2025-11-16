@@ -42,7 +42,7 @@ function update_start()
 			--music(-1, 3000)
 			btnreleased = false
 			start_game()
-			game.wave=3
+			game.wave=1
 			next_wave()
 		end
 	end
