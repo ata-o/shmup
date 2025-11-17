@@ -5,6 +5,7 @@ function draw_game()
 		draw_bullets()
 		draw_enemies()
 		draw_particles()
+		draw_pickups()
 		draw_shwaves()
 		draw_ui()
 end
@@ -13,6 +14,7 @@ function update_game()
 		move_ship()
 		move_bullets()
 		move_enemies()
+		move_pickups()
 		move_background()
 
 		check_ship_bounds()
@@ -120,6 +122,7 @@ function start_game()
 	init_enemies()
 	init_particles()
 	init_shwaves()
+	init_pickups()
 end
 
 function blink() 
