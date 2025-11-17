@@ -82,39 +82,90 @@ function spawn_wave(wave)
 	sfx(28)
 	attackfreq=60
 	nextfire=0
-	local entype = game.wave
-	if entype==1 then
+	local wave = game.wave
+	if wave==1 then
+		--space invaders
 		placenems({
-			{1,1,1,1,1,1,1,1,1,1},
-			{1,1,1,1,1,1,1,1,1,1},
-			{1,1,1,1,1,1,1,1,1,1},
-			{1,1,1,1,1,1,1,1,1,1},
+			{0,1,1,1,1,1,1,1,1,0},
+			{0,1,1,1,1,1,1,1,1,0},
+			{0,1,1,1,1,1,1,1,1,0},
+			{0,1,1,1,1,1,1,1,1,0},
 		})
-	elseif entype==2 then
+	elseif wave==2 then
+		--red tutorial
 		placenems({
 			{1,1,2,2,1,1,2,2,1,1},
 			{1,1,2,2,1,1,2,2,1,1},
 			{1,1,2,2,2,2,2,2,1,1},
 			{1,1,2,2,2,2,2,2,1,1},
 		})
-	elseif entype==3 then	
+	elseif wave==3 then
+		--spin tutorial
 		placenems({
-			{3,3,0,2,2,2,2,0,3,3},
-			{3,3,0,2,2,2,2,0,3,3},
-			{3,3,0,2,2,2,2,0,3,3},
-			{3,3,0,2,2,2,2,0,3,3},
+			{3,3,0,1,1,1,1,0,3,3},
+			{3,3,0,1,1,1,1,0,3,3},
+			{3,3,0,1,1,1,1,0,3,3},
+			{3,3,0,1,1,1,1,0,3,3},
 		})
-	elseif entype==4 then
-		placenems({
+	elseif wave==4 then
+ 	--spin tutorial
+ 	
+ 		placenems({
+			{3,3,0,1,1,1,1,0,3,3},
+ 			{3,3,0,1,1,1,1,0,3,3},
+ 			{3,3,0,1,1,1,1,0,3,3},
+ 			{3,3,0,1,1,1,1,0,3,3}
+ 	})
+ 	elseif wave==5 then
+ 	--chess
+ 	
+ 		placenems({
+			{3,1,3,1,2,2,1,3,1,3},
+ 			{1,3,1,2,1,1,2,1,3,1},
+ 			{3,1,3,1,2,2,1,3,1,3},
+ 			{1,3,1,2,1,1,2,1,3,1}
+ 	})
+ 	elseif wave==6 then
+ 	--yellow tutorial
+ 	
+ 		placenems({
+			{1,1,1,0,4,0,0,1,1,1},
+ 			{1,1,0,0,0,0,0,0,1,1},
+ 			{1,1,0,1,1,1,1,0,1,1},
+ 			{1,1,0,1,1,1,1,0,1,1}
+ 	})
+
+ 	elseif wave==7 then
+ 	--double yellow
+ 	
+ 		placenems({
+			{3,3,0,1,1,1,1,0,3,3},
+ 			{4,0,0,2,2,2,2,0,4,0},
+ 			{0,0,0,2,1,1,2,0,0,0},
+ 			{1,1,0,1,1,1,1,0,1,1}
+ 		})
+ 	elseif wave==8 then
+ 	--hell
+ 	
+ 		placenems({
+			{0,0,1,1,1,1,1,1,0,0},
+ 			{3,3,1,1,1,1,1,1,3,3},
+ 			{3,3,2,2,2,2,2,2,3,3},
+ 			{3,3,2,2,2,2,2,2,3,3}
+ 	})
+ 	elseif wave==9 then
+ 	--boss
+ 	
+ 		placenems({
 			{0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,4,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0},
-		})
-	end
+ 			{0,0,0,0,4,0,0,0,0,0},
+ 			{0,0,0,0,0,0,0,0,0,0},
+ 			{0,0,0,0,0,0,0,0,0,0}
+ 	})
+ 	end
 end
 
-function placenems(lvl)
+function	placenems(lvl)
 	for y=1,4 do
 		for x=1,10 do
 			if lvl[y][x]!=0 then
@@ -126,7 +177,7 @@ end
 
 function next_wave()
 	game.wave += 1
-	if game.wave > 4 then
+	if game.wave > 9 then
 		game.stage = "win"
 		game.lockout=t+30
 		music(4)
@@ -242,6 +293,12 @@ end
 
 function pick_fire()
 	local maxnum = min(10, #enemies)
+
+	for myen in all(enemies) do
+		if myen.type==4 and rnd()<0.5 and myen.act=="protec" then
+			make_ebullet_spread(myen, 8, 1.3, rnd())
+		end
+	end
 
 	local ind = flr(rnd(maxnum))
 	ind = #enemies - ind
