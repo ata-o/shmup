@@ -27,13 +27,15 @@ function make_game()
 	game.bombspr = 14
 	game.bombempty = 15
 
+	game.cher=0
+
 	start_game()
 end
 
 function draw_ui()
 	print("score: " .. game.score, 40, 1, 4)
 	draw_hp()
-	draw_bombs()
+	draw_cher()
 end
 
 function draw_hp()
@@ -56,6 +58,11 @@ function draw_bombs()
 	end
 end
 
+function draw_cher()
+	spr(38, 108, 0)
+	print(game.cher, 118, 1, 14)
+end
+
 function draw_object(obj)
 	local sprx=obj.x
 	local spry=obj.y
@@ -72,6 +79,13 @@ function draw_object(obj)
 		spry-=2
 	end
 	spr(obj.spr, sprx, spry, obj.sprw, obj.sprh)
+end
+
+function draw_outline(obj)
+	spr(obj.spr, obj.x+1, obj.y, obj.sprw, obj.sprh)
+	spr(obj.spr, obj.x-1, obj.y, obj.sprw, obj.sprh)
+	spr(obj.spr, obj.x, obj.y+1, obj.sprw, obj.sprh)
+	spr(obj.spr, obj.x, obj.y-1, obj.sprw, obj.sprh)
 end
 
 function make_object()
@@ -133,6 +147,9 @@ function check_bullet_collisions()
 				enem.flash=3
 				if enem.hp <= 0 then
 					kill_enemy(enem)
+					if rnd()<0.1 then
+						make_pickup(enem.x+3, enem.y+3)
+					end
 				end
 				if #enemies == 0 then
 					next_wave()
